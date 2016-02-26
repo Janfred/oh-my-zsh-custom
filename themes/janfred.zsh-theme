@@ -64,11 +64,11 @@ prompt_git() {
     fi
 
     case `git config commit.gpgsign` in
-      "false"|"no"|"off")
-        signing=""
+      "yes"|"true"|"on")
+        signing=$' \ue0a2'
         ;;
       *)
-        signing=$' \ue0a2'
+        signing=""
         ;;
     esac
 
