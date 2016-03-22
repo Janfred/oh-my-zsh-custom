@@ -1,0 +1,3 @@
+[submodule "plugins/virsh"]
+	path = plugins/virsh
+	url = https://github.com/jplitza/zsh-virsh-autocomplete.git
