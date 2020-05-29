@@ -44,9 +44,9 @@ prompt_git() {
     PL_BRANCH_CHAR=$'\ue0a0'         # 
   }
   local ref dirty mode repo_path
-  repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    repo_path=$(git rev-parse --git-dir 2>/dev/null)
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
     if [[ -n $dirty ]]; then
@@ -164,7 +164,7 @@ build_prompt() {
 function git_time_since_commit() {
     if git rev-parse --git-dir > /dev/null 2>&1; then
         # Only proceed if there is actually a commit.
-        if [[ $(git log 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
+        if [[ $(git log -1 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
             # Get the last commit.
             last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
             now=`date +%s`
@@ -179,17 +179,18 @@ function git_time_since_commit() {
             SUB_HOURS=$((HOURS % 24))
             SUB_MINUTES=$((MINUTES % 60))
 
-            if [[ -n $(git status -s 2> /dev/null) ]]; then
-                if [ "$MINUTES" -gt 30 ]; then
-                    COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_LONG"
-                elif [ "$MINUTES" -gt 10 ]; then
-                    COLOR="$ZSH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM"
-                else
-                    COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_SHORT"
-                fi
-            else
-                COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL"
-            fi
+            #if [[ -n $(git status -s 2> /dev/null) ]]; then
+            #    if [ "$MINUTES" -gt 30 ]; then
+            #        COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_LONG"
+            #    elif [ "$MINUTES" -gt 10 ]; then
+            #        COLOR="$ZSH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM"
+            #    else
+            #        COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_SHORT"
+            #    fi
+            #else
+            #    COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL"
+            #fi
+            COLOR="$ZSH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL"
 
             if [ "$HOURS" -gt 24 ]; then
                 echo "[$COLOR${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m%{$reset_color%}]"
@@ -208,3 +209,5 @@ function git_time_since_commit() {
 PROMPT='%{%f%b%k%}$(build_prompt) '
 
 RPROMPT='$(git_time_since_commit)%{$fg[green]%}[%*]%{%F{red}%}%(?..[%?])%{$reset_color%}'
+
+compdef mosh='ssh'
